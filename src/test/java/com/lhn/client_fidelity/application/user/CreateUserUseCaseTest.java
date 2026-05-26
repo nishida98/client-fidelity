@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -266,6 +267,16 @@ class CreateUserUseCaseTest {
 		public boolean existsCommerceClientByEmail(String email) {
 			lastCommerceClientEmailLookup = email;
 			return commerceClientExists;
+		}
+
+		@Override
+		public Optional<User> findByEmail(String email) {
+			return Optional.empty();
+		}
+
+		@Override
+		public Optional<User> findByPhone(String phone) {
+			return Optional.empty();
 		}
 
 		@Override

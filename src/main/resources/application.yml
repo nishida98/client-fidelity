@@ -17,3 +17,17 @@ client-fidelity:
     type: h2
     csv:
       path: ./data/users.csv
+  authentication:
+    code-expiration: PT5M
+    jwt-expiration: PT1H
+    max-failed-attempts: 5
+    email-provider: console
+    phone-provider: not-configured
+    jwt-secret: local-development-secret-change-before-production
+    smtp:
+      sender: no-reply@client-fidelity.local
+      timeout: 5s
+    ses:
+      region: us-east-1
+      sender: no-reply@client-fidelity.local
+      timeout: 5s

@@ -2,8 +2,14 @@ package com.lhn.client_fidelity.infrastructure.user.csv;
 
 import com.lhn.client_fidelity.domain.user.Commerce;
 import com.lhn.client_fidelity.domain.user.CommerceClient;
+import com.lhn.client_fidelity.domain.user.Email;
+import com.lhn.client_fidelity.domain.user.GovernmentIdentifier;
+import com.lhn.client_fidelity.domain.user.Phone;
 import com.lhn.client_fidelity.domain.user.User;
+import com.lhn.client_fidelity.domain.user.UserId;
+import com.lhn.client_fidelity.domain.user.UserType;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +78,27 @@ record CsvUserRecord(
 				escape(phone),
 				escape(governmentIdentifier),
 				escape(createdAt)
+		);
+	}
+
+	User toDomain() {
+		if (UserType.COMMERCE.name().equals(type)) {
+			return new Commerce(
+					new UserId(id),
+					name,
+					contactName,
+					new Email(email),
+					new Phone(phone),
+					new GovernmentIdentifier(governmentIdentifier),
+					Instant.parse(createdAt)
+			);
+		}
+		return new CommerceClient(
+				new UserId(id),
+				name,
+				new Email(email),
+				new Phone(phone),
+				Instant.parse(createdAt)
 		);
 	}
 

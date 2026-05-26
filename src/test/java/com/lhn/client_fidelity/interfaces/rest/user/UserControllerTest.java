@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,7 +33,7 @@ class UserControllerTest {
 		CreateUserUseCase useCase = new CreateUserUseCase(repository, clock);
 		mockMvc = MockMvcBuilders
 				.standaloneSetup(new UserController(useCase))
-				.setControllerAdvice(new RestExceptionHandler())
+				.setControllerAdvice(new RestExceptionHandler(clock))
 				.build();
 	}
 
@@ -214,6 +215,16 @@ class UserControllerTest {
 		@Override
 		public boolean existsCommerceClientByEmail(String email) {
 			return commerceClientExists;
+		}
+
+		@Override
+		public Optional<User> findByEmail(String email) {
+			return Optional.empty();
+		}
+
+		@Override
+		public Optional<User> findByPhone(String phone) {
+			return Optional.empty();
 		}
 
 		@Override

@@ -9,6 +9,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 @ConditionalOnProperty(name = "client-fidelity.persistence.type", havingValue = "h2", matchIfMissing = true)
 class JpaUserRepository implements UserRepository {
@@ -27,6 +29,16 @@ class JpaUserRepository implements UserRepository {
 	@Override
 	public boolean existsCommerceClientByEmail(String email) {
 		return repository.existsByTypeAndEmail(UserType.COMMERCE_CLIENT, email);
+	}
+
+	@Override
+	public Optional<User> findByEmail(String email) {
+		return repository.findFirstByEmail(email).map(JpaUserMapper::toDomain);
+	}
+
+	@Override
+	public Optional<User> findByPhone(String phone) {
+		return repository.findFirstByPhone(phone).map(JpaUserMapper::toDomain);
 	}
 
 	@Override

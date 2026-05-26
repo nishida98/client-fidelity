@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @ConditionalOnProperty(name = "client-fidelity.persistence.type", havingValue = "csv")
@@ -43,6 +44,22 @@ public class CsvUserRepository implements UserRepository {
 	public synchronized boolean existsCommerceClientByEmail(String email) {
 		return records().stream()
 				.anyMatch(record -> "COMMERCE_CLIENT".equals(record.type()) && email.equals(record.email()));
+	}
+
+	@Override
+	public synchronized Optional<User> findByEmail(String email) {
+		return records().stream()
+				.filter(record -> email.equals(record.email()))
+				.findFirst()
+				.map(CsvUserRecord::toDomain);
+	}
+
+	@Override
+	public synchronized Optional<User> findByPhone(String phone) {
+		return records().stream()
+				.filter(record -> phone.equals(record.phone()))
+				.findFirst()
+				.map(CsvUserRecord::toDomain);
 	}
 
 	@Override

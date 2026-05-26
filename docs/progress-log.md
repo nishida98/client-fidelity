@@ -1,5 +1,71 @@
 # Progress Log
 
+## 2026-05-26 - User Authentication Specification
+
+### Specification
+
+- Added `docs/specs/user-authentication.md`.
+- Defined a two-step authentication flow:
+  - Request authentication code.
+  - Verify code and receive JWT.
+- Defined JWT as the application authentication mechanism.
+- Defined authentication methods:
+  - `EMAIL`
+  - `PHONE`
+- Defined email delivery implementations:
+  - Local console provider.
+  - SMTP provider.
+  - Amazon SES provider.
+- Defined phone delivery as a provider port/interface with the concrete provider still open.
+- Chose database persistence for authentication codes instead of cache-only storage.
+- Updated the authentication code storage rule to persist the generated code as plain text instead of hashing it.
+- Defined 5-minute code expiration and 5-minute resend lockout while an active code exists.
+- Added edge cases, expected errors, provider behavior, use case flow, and test coverage.
+- Added implementation task breakdown under `docs/specs/user-authentication-tasks`.
+
+### Implementation
+
+- Implemented authentication domain model:
+  - `AuthenticationMethod`
+  - `AuthenticationChallenge`
+  - `AuthenticationChallengeId`
+  - `AuthenticationCode`
+- Implemented authentication application ports and use cases:
+  - `AuthenticationChallengeRepository`
+  - `AuthenticationCodeDelivery`
+  - `TokenService`
+  - `RequestAuthenticationCodeUseCase`
+  - `VerifyAuthenticationCodeUseCase`
+- Extended `UserRepository` with lookup by normalized email and phone.
+- Implemented authentication challenge persistence with JPA/H2.
+- Implemented delivery providers:
+  - Console email provider.
+  - SMTP email provider, enabled only when configured.
+  - SES provider placeholder, enabled only when configured.
+  - Phone-not-configured provider.
+- Implemented HMAC-SHA256 JWT token creation without adding a JWT library.
+- Added REST endpoints:
+  - `POST /auth/codes`
+  - `POST /auth/token`
+- Extended centralized REST error handling for authentication failures.
+- Added tests for:
+  - Auth domain behavior.
+  - Request-code and verify-code use cases.
+  - JPA authentication challenge persistence.
+  - Console and phone delivery providers.
+  - JWT token creation.
+  - Auth API behavior.
+
+### Verification
+
+- Verified with:
+
+```powershell
+.\mvnw.cmd -q clean "-Djava.version=17" test
+```
+
+- The Java 17 override test run passes.
+
 ## 2026-05-25 - Create User Vertical Slice
 
 ### Specification
