@@ -2,6 +2,7 @@ package com.lhn.client_fidelity.infrastructure.user.h2;
 
 import com.lhn.client_fidelity.application.user.UserRepository;
 import com.lhn.client_fidelity.domain.user.User;
+import com.lhn.client_fidelity.domain.user.UserId;
 import com.lhn.client_fidelity.domain.user.UserType;
 import com.lhn.client_fidelity.exception.DuplicateUserPersistenceException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,6 +30,11 @@ class JpaUserRepository implements UserRepository {
 	@Override
 	public boolean existsCommerceClientByEmail(String email) {
 		return repository.existsByTypeAndEmail(UserType.COMMERCE_CLIENT, email);
+	}
+
+	@Override
+	public Optional<User> findById(UserId id) {
+		return repository.findById(id.value()).map(JpaUserMapper::toDomain);
 	}
 
 	@Override

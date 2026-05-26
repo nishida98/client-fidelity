@@ -10,6 +10,8 @@ interface JpaUserCrudRepository extends JpaRepository<UserEntity, String> {
 
 	boolean existsByTypeAndEmail(com.lhn.client_fidelity.domain.user.UserType type, String email);
 
+	Optional<UserEntity> findById(String id);
+
 	Optional<UserEntity> findFirstByEmail(String email);
 
 	Optional<UserEntity> findFirstByPhone(String phone);

@@ -240,6 +240,11 @@ class AuthenticationUseCaseTest {
 		}
 
 		@Override
+		public Optional<User> findById(UserId id) {
+			return user.filter(value -> value.id().equals(id));
+		}
+
+		@Override
 		public Optional<User> findByEmail(String email) {
 			return user;
 		}

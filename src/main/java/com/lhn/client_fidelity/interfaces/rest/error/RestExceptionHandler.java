@@ -5,19 +5,27 @@ import com.lhn.client_fidelity.exception.CommerceClientAlreadyExistsException;
 import com.lhn.client_fidelity.exception.AuthenticationCodeAlreadySentException;
 import com.lhn.client_fidelity.exception.AuthenticationDeliveryFailedException;
 import com.lhn.client_fidelity.exception.AuthenticationValidationException;
+import com.lhn.client_fidelity.exception.CampaignCreationException;
+import com.lhn.client_fidelity.exception.CampaignDeletionException;
+import com.lhn.client_fidelity.exception.CampaignNotFoundException;
+import com.lhn.client_fidelity.exception.CampaignUpdateException;
+import com.lhn.client_fidelity.exception.CampaignValidationException;
+import com.lhn.client_fidelity.exception.ForbiddenUserTypeException;
+import com.lhn.client_fidelity.exception.InvalidAccessTokenException;
 import com.lhn.client_fidelity.exception.InvalidAuthenticationCodeException;
+import com.lhn.client_fidelity.exception.MissingAccessTokenException;
 import com.lhn.client_fidelity.exception.PhoneDeliveryNotConfiguredException;
 import com.lhn.client_fidelity.exception.TokenCreationException;
 import com.lhn.client_fidelity.exception.UnknownAuthenticationMethodException;
 import com.lhn.client_fidelity.exception.UnknownUserTypeException;
 import com.lhn.client_fidelity.exception.UserCreationException;
 import com.lhn.client_fidelity.exception.UserValidationException;
+import tools.jackson.databind.exc.UnrecognizedPropertyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import tools.jackson.databind.exc.UnrecognizedPropertyException;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -78,6 +86,16 @@ public class RestExceptionHandler {
 				.body(new ErrorResponse("VALIDATION_FAILED", exception.getMessage(), details));
 	}
 
+	@ExceptionHandler(CampaignValidationException.class)
+	ResponseEntity<ErrorResponse> handleCampaignValidation(CampaignValidationException exception) {
+		List<ErrorDetailResponse> details = exception.errors().stream()
+				.map(error -> new ErrorDetailResponse(error.field(), error.message()))
+				.toList();
+		return ResponseEntity
+				.unprocessableEntity()
+				.body(new ErrorResponse("VALIDATION_FAILED", exception.getMessage(), details));
+	}
+
 	@ExceptionHandler(UnknownAuthenticationMethodException.class)
 	ResponseEntity<ErrorResponse> handleUnknownAuthenticationMethod(UnknownAuthenticationMethodException exception) {
 		return ResponseEntity
@@ -107,6 +125,34 @@ public class RestExceptionHandler {
 				.body(ErrorResponse.withoutDetails("INVALID_AUTHENTICATION_CODE", exception.getMessage()));
 	}
 
+	@ExceptionHandler(MissingAccessTokenException.class)
+	ResponseEntity<ErrorResponse> handleMissingAccessToken(MissingAccessTokenException exception) {
+		return ResponseEntity
+				.status(HttpStatus.UNAUTHORIZED)
+				.body(ErrorResponse.withoutDetails("MISSING_ACCESS_TOKEN", exception.getMessage()));
+	}
+
+	@ExceptionHandler(InvalidAccessTokenException.class)
+	ResponseEntity<ErrorResponse> handleInvalidAccessToken(InvalidAccessTokenException exception) {
+		return ResponseEntity
+				.status(HttpStatus.UNAUTHORIZED)
+				.body(ErrorResponse.withoutDetails("INVALID_ACCESS_TOKEN", exception.getMessage()));
+	}
+
+	@ExceptionHandler(ForbiddenUserTypeException.class)
+	ResponseEntity<ErrorResponse> handleForbiddenUserType(ForbiddenUserTypeException exception) {
+		return ResponseEntity
+				.status(HttpStatus.FORBIDDEN)
+				.body(ErrorResponse.withoutDetails("FORBIDDEN_USER_TYPE", exception.getMessage()));
+	}
+
+	@ExceptionHandler(CampaignNotFoundException.class)
+	ResponseEntity<ErrorResponse> handleCampaignNotFound(CampaignNotFoundException exception) {
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(ErrorResponse.withoutDetails("CAMPAIGN_NOT_FOUND", exception.getMessage()));
+	}
+
 	@ExceptionHandler(AuthenticationDeliveryFailedException.class)
 	ResponseEntity<ErrorResponse> handleDeliveryFailure(AuthenticationDeliveryFailedException exception) {
 		return ResponseEntity
@@ -119,6 +165,27 @@ public class RestExceptionHandler {
 		return ResponseEntity
 				.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body(ErrorResponse.withoutDetails("TOKEN_CREATION_FAILED", "Authentication token could not be created."));
+	}
+
+	@ExceptionHandler(CampaignCreationException.class)
+	ResponseEntity<ErrorResponse> handleCampaignCreationFailure(CampaignCreationException exception) {
+		return ResponseEntity
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(ErrorResponse.withoutDetails("CAMPAIGN_CREATION_FAILED", "Campaign could not be created."));
+	}
+
+	@ExceptionHandler(CampaignUpdateException.class)
+	ResponseEntity<ErrorResponse> handleCampaignUpdateFailure(CampaignUpdateException exception) {
+		return ResponseEntity
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(ErrorResponse.withoutDetails("CAMPAIGN_UPDATE_FAILED", "Campaign could not be updated."));
+	}
+
+	@ExceptionHandler(CampaignDeletionException.class)
+	ResponseEntity<ErrorResponse> handleCampaignDeletionFailure(CampaignDeletionException exception) {
+		return ResponseEntity
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(ErrorResponse.withoutDetails("CAMPAIGN_DELETION_FAILED", "Campaign could not be deleted."));
 	}
 
 	@ExceptionHandler(PhoneDeliveryNotConfiguredException.class)
@@ -149,3 +216,4 @@ public class RestExceptionHandler {
 				.body(ErrorResponse.withoutDetails("USER_CREATION_FAILED", "User could not be created."));
 	}
 }
+

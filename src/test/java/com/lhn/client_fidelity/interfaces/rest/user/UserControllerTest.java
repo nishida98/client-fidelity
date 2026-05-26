@@ -3,6 +3,7 @@ package com.lhn.client_fidelity.interfaces.rest.user;
 import com.lhn.client_fidelity.application.user.CreateUserUseCase;
 import com.lhn.client_fidelity.application.user.UserRepository;
 import com.lhn.client_fidelity.domain.user.User;
+import com.lhn.client_fidelity.domain.user.UserId;
 import com.lhn.client_fidelity.interfaces.rest.error.RestExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -215,6 +216,11 @@ class UserControllerTest {
 		@Override
 		public boolean existsCommerceClientByEmail(String email) {
 			return commerceClientExists;
+		}
+
+		@Override
+		public Optional<User> findById(UserId id) {
+			return Optional.empty();
 		}
 
 		@Override

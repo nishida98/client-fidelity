@@ -4,6 +4,7 @@ import com.lhn.client_fidelity.application.user.UserRepository;
 import com.lhn.client_fidelity.domain.user.Commerce;
 import com.lhn.client_fidelity.domain.user.CommerceClient;
 import com.lhn.client_fidelity.domain.user.User;
+import com.lhn.client_fidelity.domain.user.UserId;
 import com.lhn.client_fidelity.exception.DuplicateUserPersistenceException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -44,6 +45,14 @@ public class CsvUserRepository implements UserRepository {
 	public synchronized boolean existsCommerceClientByEmail(String email) {
 		return records().stream()
 				.anyMatch(record -> "COMMERCE_CLIENT".equals(record.type()) && email.equals(record.email()));
+	}
+
+	@Override
+	public synchronized Optional<User> findById(UserId id) {
+		return records().stream()
+				.filter(record -> id.value().equals(record.id()))
+				.findFirst()
+				.map(CsvUserRecord::toDomain);
 	}
 
 	@Override

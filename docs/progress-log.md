@@ -2,6 +2,14 @@
 
 ## 2026-05-26 - User Authentication Specification
 
+### API Contracts
+
+- Added consolidated API contracts document at `docs/api-contracts.md`.
+- Documented current public contracts:
+  - `POST /users`
+  - `POST /auth/codes`
+  - `POST /auth/token`
+
 ### Specification
 
 - Added `docs/specs/user-authentication.md`.

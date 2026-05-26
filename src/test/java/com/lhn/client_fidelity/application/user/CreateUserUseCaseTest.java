@@ -1,6 +1,7 @@
 package com.lhn.client_fidelity.application.user;
 
 import com.lhn.client_fidelity.domain.user.User;
+import com.lhn.client_fidelity.domain.user.UserId;
 import com.lhn.client_fidelity.domain.user.UserType;
 import com.lhn.client_fidelity.exception.CommerceAlreadyExistsException;
 import com.lhn.client_fidelity.exception.CommerceClientAlreadyExistsException;
@@ -267,6 +268,11 @@ class CreateUserUseCaseTest {
 		public boolean existsCommerceClientByEmail(String email) {
 			lastCommerceClientEmailLookup = email;
 			return commerceClientExists;
+		}
+
+		@Override
+		public Optional<User> findById(UserId id) {
+			return Optional.empty();
 		}
 
 		@Override

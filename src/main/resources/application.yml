@@ -17,6 +17,7 @@ client-fidelity:
     type: h2
     csv:
       path: ./data/users.csv
+      campaign-path: ./data/campaigns.csv
   authentication:
     code-expiration: PT5M
     jwt-expiration: PT1H
